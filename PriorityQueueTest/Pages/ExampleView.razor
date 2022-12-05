@@ -1,0 +1,15 @@
+﻿@page "/example"
+
+<h3>Machine</h3>
+
+<div>
+	<div style="width:600px; display:inline-block;"><StageView Stage=@tbar /></div>
+	<div style="width:600px; display:inline-block;"><StageView Stage=@frontPickhead /></div>
+	<div style="width:600px; display:inline-block;"><StageView Stage=@rearPickhead /></div>
+</div>
+
+@code {
+	Stage tbar = new("TBar");
+	Stage frontPickhead = new("FrontPickHead");
+	Stage rearPickhead = new("RearPickHead");
+}

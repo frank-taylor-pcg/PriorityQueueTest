@@ -1,0 +1,74 @@
+﻿@using System.ComponentModel
+
+@if (Stage is not null)
+{
+	<div class="alert alert-secondary">
+		<h4 class="alert-heading">@Stage.Name</h4>
+		<h5 class="alert-heading">Currently moving stage: @Globals.CurrentMovingStage</h5>
+		<h5 class="alert-heading">T-Bar intends to move: @PriorityQueue.Instance.TBarIntendsToMove()</h5>
+		<table class="table table-hover">
+			<tbody>
+				<tr class="table-dark">
+					<td>Is Currently Moving?</td>
+					<td>
+						<span class="badge bg-@GetMovingClass()">@GetMovingText()</span>
+					</td>
+				</tr>
+				<tr class="table-dark">
+					<td>Is Currently Blocked?</td>
+					<td>
+						<span class="badge bg-@GetBlockedClass()">@GetBlockedText()</span>
+					</td>
+				</tr>
+				<tr>
+					<td>Times Moved</td>
+					<td>@Stage.MoveCount</td>
+				</tr>
+				<tr>
+					<td>Times Blocked</td>
+					<td>@Stage.BlockedCount</td>
+				</tr>
+				<tr>
+					<td>Number of cycles for current block</td>
+					<td>@Stage.CurrentBlockedCycles</td>
+				</tr>
+				<tr>
+					<td>Most cycles blocked at one time</td>
+					<td>@Stage.MaxBlockedCycles</td>
+				</tr>
+			</tbody>
+		</table>
+		<table>
+			<tr>
+				<th>Logs</th>
+			</tr>
+			@foreach (string log in @Stage.Log)
+			{
+				<tr>
+					<td>@log</td>
+				</tr>
+			}
+		</table>
+	</div>
+}
+
+@code {
+	[Parameter]
+	public Stage? Stage { get; set; }
+
+	protected override void OnInitialized()
+	{
+		Stage!.PropertyChanged += PropertyHasChanged;
+	}
+
+	private void PropertyHasChanged(object? sender, PropertyChangedEventArgs args)
+	{
+		InvokeAsync(StateHasChanged);
+	}
+
+	private string GetMovingClass() => (Stage!.IsMoving) ? "success" : "dark";
+	private string GetMovingText() => (Stage!.IsMoving) ? "Moving" : "Not Moving";
+
+	private string GetBlockedClass() => (Stage!.IsBlocked) ? "danger" : "dark";
+	private string GetBlockedText() => (Stage!.IsBlocked) ? "Blocked" : "Not Blocked";
+}

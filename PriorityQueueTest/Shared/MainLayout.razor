@@ -1,0 +1,44 @@
+﻿@using PriorityQueueTest.Pages
+@inherits LayoutComponentBase
+
+<PageTitle>PriorityQueueTest</PageTitle>
+
+<div class="page">
+	<main>
+
+		<div>
+			<div style="width:600px; display:inline-block;"><h3>Collision avoidance simulation</h3></div>
+			<div style="display:inline-block;"><h4>Collisions detected: <span class="badge bg-@GetCollisionClass()">@collisionsDetected</span></h4></div>
+		</div>
+
+		<div>
+			<div style="width:600px; display:inline-block;"><StageView Stage=@tbar /></div>
+			<div style="width:600px; display:inline-block;"><StageView Stage=@frontPickhead /></div>
+			<div style="width:600px; display:inline-block;"><StageView Stage=@rearPickhead /></div>
+		</div>
+	</main>
+</div>
+
+@code {
+	Stage tbar = new("TBar");
+	Stage frontPickhead = new("FrontPickHead");
+	Stage rearPickhead = new("RearPickHead");
+	int collisionsDetected = 0;
+
+	protected override void OnInitialized()
+	{
+		tbar.CheckCollisions = UpdateCollisionCount;
+		base.OnInitialized();
+	}
+
+	void UpdateCollisionCount()
+	{
+		if (tbar.IsMoving && (frontPickhead.IsMoving || rearPickhead.IsMoving))
+		{
+			collisionsDetected++;
+			InvokeAsync(StateHasChanged);
+		}
+	}
+
+	string GetCollisionClass() => collisionsDetected == 0 ? "success" : "danger";
+}
